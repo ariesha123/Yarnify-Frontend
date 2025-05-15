@@ -61,20 +61,20 @@ module.exports = {
 
     icons1: 
     {
-        color: 'black',
+        color: 'rgb(38, 29, 29)',
         fontSize: 30,
     },
 
     icons2: 
     {
-        color: 'black',
+        color: 'rgb(53, 44, 44)',
         fontSize: 30,
         marginRight: 10
     },
 
     icons3: 
     {
-        color: 'black',
+        color: 'rgb(66, 55, 55)',
         fontSize: 25,
         marginLeft: 15,
     }

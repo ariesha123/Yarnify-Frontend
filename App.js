@@ -17,6 +17,7 @@ import All_Chats from './src/screens/ChatSection/All_Chats';
 import SearchUserPage from './src/screens/Mainpage/SearchUserPage';
 import NotificationPage from './src/screens/Mainpage/NotificationPage';
 import My_UserProfile from './src/screens/Profile/My_UserProfile';
+import ExplorePage from './src/screens/Mainpage/ExplorePage';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -48,7 +49,7 @@ export default function App() {
 
       <Stack.Screen name="SearchUserPage" component={SearchUserPage}
           options={{
-            animation: "slide_from_bottom"
+            animation: "slide_from_right"
           }}/>
 
       <Stack.Screen name="NotificationPage" component={NotificationPage}
@@ -58,7 +59,12 @@ export default function App() {
 
       <Stack.Screen name="My_UserProfile" component={My_UserProfile}
           options={{
-            animation: "slide_from_bottom"
+            animation: "slide_from_right"
+          }}/>
+
+      <Stack.Screen name="ExplorePage" component={ExplorePage}
+          options={{
+            animation: "slide_from_right"
           }}/>
     
     </Stack.Navigator>

@@ -8,21 +8,56 @@ import { icons1 } from '../common css/pagecss';
 
 
 
-const Bottomnavbar = ({ navigation }) => {
+const Bottomnavbar = ({ navigation, page }) => {
+
+  //console.log(page)
   return (
     
     <View style= {styles.container}>
-        <Entypo name="home" size={24} color="black" style={icons1} 
-            onPress={() => navigation.navigate ('MainPage')}
+      {
+        page == 'Mainpage' ?
+          <Entypo name="home" size={24} color="black" style={icons1} 
+            onPress={() => navigation.navigate ('Mainpage')}
         />
-              
-        <FontAwesome5 name="search" size={24} color="black"  style={icons1} 
+         : 
+          <Entypo name="home" size={24} color="black" style={icons1} 
+            onPress={() => navigation.navigate ('Mainpage')}
+          />
+      }
+        
+
+      {
+        page == 'SearchUserPage' ?
+            <FontAwesome5 name="search" size={24} color="black"  style={icons1} 
             onPress={() => navigation.navigate ('SearchUserPage')}
         />
-        <MaterialIcons name="explore" size={24} color="black"  style={icons1} />
-        <Feather name="user" size={24} color="black"  style={icons1} 
+        : 
+            <FontAwesome5 name="search" size={24} color="black"  style={icons1} 
+            onPress={() => navigation.navigate ('SearchUserPage')}
+        />
+      }   
+
+      {
+         page == 'ExplorePage'?
+            <MaterialIcons name="explore" size={24} color="black"  style={icons1} 
+            onPress={() => navigation.navigate("ExplorePage")}/>
+          :
+            <MaterialIcons name="explore" size={24} color="black"  style={icons1} 
+            onPress={() => navigation.navigate("ExplorePage")}/>
+      }  
+        
+
+       {
+          page == 'My_UserProfile' ? 
+            <Feather name="user" size={24} color="black"  style={icons1} 
+            onPress={() => navigation.navigate ('My_UserProfile')}
+        /> 
+        : 
+            <Feather name="user" size={24} color="black"  style={icons1} 
             onPress={() => navigation.navigate ('My_UserProfile')}
         />
+       } 
+        
     </View>
    
   )
@@ -45,8 +80,13 @@ const styles = StyleSheet.create({
     zIndex: 100,
     borderTopWidth: 1,
     paddingVertical: 10,
-    height: 100
+    height: 100,
+    
+  
+  },
 
-
-   } 
-  });
+   //activeicons1:
+  
+   
+  
+});

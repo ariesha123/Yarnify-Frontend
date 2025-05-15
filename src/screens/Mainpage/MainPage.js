@@ -11,8 +11,8 @@ const MainPage = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar />
-      <TopNavbar navigation={navigation} />
-      <Bottomnavbar navigation={navigation} />
+      <TopNavbar navigation={navigation} page={"Mainpage"} notify={"Notification"}/>
+      <Bottomnavbar navigation={navigation}  page={"Mainpage"}/>
       <FollowersRandomPost/>
     
     
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'pink',
+    backgroundColor: 'rgb(245, 231, 231)',
     paddingVertical: 100,
   }
 })

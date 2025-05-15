@@ -6,13 +6,14 @@ import Bottomnavbar from '../../Components/Bottomnavbar'
 import TopNavbar from '../../Components/TopNavbar'
 import FollowersRandomPost from '../../Components/FollowersRandomPost'
 
-const SearchUserPage = ({navigation}) => {
+
+const ExplorePage = ({navigation}) => {
   return (
-    <View style={styles.container}>
+     <View style={styles.container}>
       <StatusBar />
       <TopNavbar navigation={navigation} />
-      <Bottomnavbar navigation={navigation} page= {"SearchUserPage"}/>
-      <Text style={formHead}> Search User</Text>
+      <Bottomnavbar navigation={navigation} page= {"ExplorePage"} />
+      <Text style={formHead}> Explore Page</Text>
     
     
 
@@ -21,11 +22,11 @@ const SearchUserPage = ({navigation}) => {
   )
 }
 
-export default SearchUserPage
+export default ExplorePage
 
 const styles = StyleSheet.create({
 
-  container: {
+    container: {
     width: '100%',
     height: '100%',
     backgroundColor: 'pink',

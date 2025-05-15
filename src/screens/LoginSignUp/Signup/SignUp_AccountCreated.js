@@ -27,7 +27,7 @@ const SignUp_AccountCreated = ({navigation}) => {
     <Text style= {formHead2}> Account Created Successfully</Text>
     </View>
       <Text style = {formbtn1}
-            onPress={() => navigation.navigate('Mainpage')}>
+            onPress={() => navigation.navigate('Login')}>
             Start Exploring
       </Text>                  
     </View>

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 import React, { useState } from 'react'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { icons1, icons2, icons3 } from '../common css/pagecss'
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 
 const Post_Big_Card = (
@@ -52,7 +52,7 @@ const Post_Big_Card = (
 
     
     <View style={styles.s22}>
-        <FontAwesome name="comment" size={24} color="black" style={icons3}
+       <FontAwesome6 name="comment-alt" size={20} color="black"  style={icons3}
                 onPress={
                     () => { setShowcomments(!showcomments)
 
@@ -90,10 +90,10 @@ const styles = StyleSheet.create({
         width: '100%',
         //height: 400,
         borderRadius: 10,
-        backgroundColor: "white",
+        backgroundColor: "pink",
         marginVertical: 10,
         overflow: "hidden",
-        borderColor: 'black',
+        borderColor: 'rgb(212, 167, 167)',
         borderWidth: 1,
         
 
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 5,
-        backgroundColor: 'pink'
+        backgroundColor: 'rgb(218, 167, 167)'
     },
 
     profile_pic:
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     {
         width: '100%',
         flexDirection: 'row',
-        backgroundColor: 'pink',
+        backgroundColor: 'rgb(218, 167, 167)',
         padding: 10,
         alignItems: 'center'
     },
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     {
         colour: 'grey',
         //marginLeft: 1,
-        fontSize: 20
+        fontSize: 24
     },
 
     liked:
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     s3:
     {
         width: '100%',
-        backgroundColor: '#f5c0c0',
+        backgroundColor: 'rgb(234, 198, 198)',
         padding: 10,
 
     },

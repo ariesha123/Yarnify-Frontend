@@ -5,21 +5,29 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { formHead, formHead2, formHead3, formHead4 } from '../common css/formsCss';
 
 
-const TopNavbar = ({navigation}) => {
+const TopNavbar = ({navigation, page, notify }) => {
+
+  //console.log(page)
   return (
     <View style={styles.container}>
-     <Text style={formHead4}> Yarnify</Text>
+     <Text style={formHead4}> </Text>
       <View style={styles.iconsContainer}>
-            <Ionicons name="notifications" size={24} color="black" style={icons2} 
+            {
+              notify == 'Notification' &&
+                    <Ionicons name="notifications" size={24} color="black" style={icons2} 
                 onPress={
                 () => navigation.navigate('NotificationPage')
                       }
             
             />
-            <Ionicons name="chatbubbles" size={24} color="black" style={icons2} 
-                  onPress={
-                () => navigation.navigate('All_Chats')
-                      }/>
+            }
+            
+            {
+              page == 'Mainpage' && 
+                 <Ionicons name="chatbubbles" size={24} color="black" style={icons2} 
+                  onPress={ () => navigation.navigate('All_Chats') }/>
+            }
+            
         </View>
     </View>
   )
@@ -38,8 +46,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     position: 'absolute',
     zIndex: 100,
-    top: 30,
-    backgroundColor: "pink",
+    top: 40,
+    backgroundColor: "rgb(245, 231, 231)",
     
   },
 
