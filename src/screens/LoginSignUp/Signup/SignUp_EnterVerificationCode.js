@@ -9,7 +9,7 @@ import logo from '../../../../assets/Logo.png'
 const SignUp_EnterVerificationCode = ({navigation, route}) => {
 
       const { useremail, userVerificationCode } = route.params
-      console.log(useremail, userVerificationCode)
+      //console.log(useremail, userVerificationCode)
       const [verificationCode, setVerificationCode] = useState('')
 
       const handleVerificationCode = () => {

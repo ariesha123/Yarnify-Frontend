@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Settings, StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './src/screens/LoginSignUp/Login/Login';
@@ -18,15 +18,28 @@ import SearchUserPage from './src/screens/Mainpage/SearchUserPage';
 import NotificationPage from './src/screens/Mainpage/NotificationPage';
 import My_UserProfile from './src/screens/Profile/My_UserProfile';
 import ExplorePage from './src/screens/Mainpage/ExplorePage';
+import Settings1 from './src/Settings/Settings1';
+import EditProfile from './src/Settings/EditProfile';
+import ChangePassword from './src/Settings/ChangePassword';
+import ChangeUsername from './src/Settings/ChangeUsername';
+import ChangeDescription from './src/Settings/ChangeDescription';
+import Other_UserProfile from './src/screens/Profile/Other_UserProfile';
+import MessagePage from './src/screens/ChatSection/MessagePage';
+import UploadProfilePicture from './src/Settings/UploadProfilePicture';
+
+
 
 const Stack = createNativeStackNavigator();
 export default function App() {
+  
   return (
   <NavigationContainer>
     <Stack.Navigator screenOptions={{
       headerShown: false,
       animation: 'slide_from_right'
       }}>
+      
+      <Stack.Screen name="Mainpage" component={MainPage} />
       <Stack.Screen name="Login" component={Login} />
 
       <Stack.Screen name="SignUp_EnterEmail" component={SignUp_EnterEmail} />
@@ -39,8 +52,17 @@ export default function App() {
       <Stack.Screen name="ForgotPassword_EnterVerificationCode" component={ForgotPassword_EnterVerificationCode} />
       <Stack.Screen name="ForgotPassword_ChoosePassword" component={ForgotPassword_ChoosePassword} />
       <Stack.Screen name="ForgotPassword_Accountrecovered" component={ForgotPassword_Accountrecovered} />
+      <Stack.Screen name="Settings1" component={Settings1} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="ChangeUsername" component={ChangeUsername} />
+      <Stack.Screen name="ChangeDescription" component={ChangeDescription} />
+      <Stack.Screen name="Other_UserProfile" component={Other_UserProfile} />
+      <Stack.Screen name="MessagePage" component={MessagePage} />
+       <Stack.Screen name="UploadProfilePicture" component={UploadProfilePicture} />
       
-      <Stack.Screen name="Mainpage" component={MainPage} />
+      
+      
       <Stack.Screen name="All_Chats" component={All_Chats} 
           options={{
             animation: "slide_from_right"
@@ -66,7 +88,9 @@ export default function App() {
           options={{
             animation: "slide_from_right"
           }}/>
-    
+
+       
+
     </Stack.Navigator>
   </NavigationContainer>
 

@@ -77,5 +77,17 @@ module.exports = {
         color: 'rgb(66, 55, 55)',
         fontSize: 25,
         marginLeft: 15,
-    }
+    },
+
+    searchbar: {
+
+    width: "90%",
+    backgroundColor: 'rgb(214, 160, 160)',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginTop: 50,
+    fontSize: 18,
+    alignSelf: 'center'
+  }
 }

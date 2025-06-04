@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         backgroundColor: "pink",
         marginVertical: 10,
         overflow: "hidden",
-        borderColor: 'rgb(212, 167, 167)',
+        borderColor: 'rgb(203, 157, 157)',
         borderWidth: 1,
         
 
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 5,
-        backgroundColor: 'rgb(218, 167, 167)'
+        backgroundColor: 'rgb(226, 193, 193)'
     },
 
     profile_pic:

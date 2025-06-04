@@ -22,7 +22,7 @@ const SignUp_ChoosePassword = ({navigation, route }) => {
         }
         else {
             setLoading(true)
-            fetch('http://192.168.0.100:3000/signup', {
+            fetch('http://192.168.0.101:3000/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -6,7 +6,27 @@ import { formbtn, formHead2, formHead3, formInput } from '../../../common css/fo
 import logo from '../../../../assets/Logo.png'
 
 
-const ForgetPassword_EnterVerificationCode = ({navigation}) => {
+const ForgetPassword_EnterVerificationCode = ({navigation, route}) => {
+
+  const { useremail, userVerificationCode } = route.params;
+    console.log(useremail, userVerificationCode)
+
+    const [verificationCode, setVerificationCode] = React.useState('');
+
+
+    const handleVerificationCode = () => {
+
+        if (verificationCode != userVerificationCode) {
+            alert('Invalid Verification Code')
+        }
+        else {
+            alert('Verification Code Matched')
+            navigation.navigate('ForgotPassword_ChoosePassword', { email: useremail })
+        }
+
+        // navigation.navigate('ForgotPassword_ChoosePassword')
+    }
+
   return (
     <View style={containerFull}>
       <TouchableOpacity onPress={() => navigation.navigate('Login')} style={goback}>
@@ -21,9 +41,11 @@ const ForgetPassword_EnterVerificationCode = ({navigation}) => {
          
       <Image source={logo} style={logo2} />
       <Text style={formHead3}> A verification code has been sent to your email </Text>
-      <TextInput placeholder="Enter a 6-Digit Code" style= {formInput} />
+      <TextInput placeholder="Enter a 6-Digit Code" style= {formInput} 
+           onChangeText={(text) => setVerificationCode(text)}
+      />
       <Text style = {formbtn}
-          onPress={() => navigation.navigate('ForgotPassword_ChoosePassword')}>
+          onPress={() =>  handleVerificationCode() } >
           Next
       </Text>
               

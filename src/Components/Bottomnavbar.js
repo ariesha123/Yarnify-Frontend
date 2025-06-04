@@ -8,6 +8,7 @@ import { icons1 } from '../common css/pagecss';
 
 
 
+
 const Bottomnavbar = ({ navigation, page }) => {
 
   //console.log(page)
@@ -36,6 +37,8 @@ const Bottomnavbar = ({ navigation, page }) => {
             onPress={() => navigation.navigate ('SearchUserPage')}
         />
       }   
+
+      
 
       {
          page == 'ExplorePage'?

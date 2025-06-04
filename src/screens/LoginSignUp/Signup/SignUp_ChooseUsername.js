@@ -19,7 +19,7 @@ const SignUp_ChooseUsername = ({navigation, route}) => {
         }
         else {
             setLoading(true)
-            fetch('http://192.168.0.100:3000/changeusername', {
+            fetch('http://192.168.0.101:3000/changeusername', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json'

@@ -27,6 +27,14 @@ const TopNavbar = ({navigation, page, notify }) => {
                  <Ionicons name="chatbubbles" size={24} color="black" style={icons2} 
                   onPress={ () => navigation.navigate('All_Chats') }/>
             }
+
+             {
+                page === 'My_UserProfile' &&
+                <Ionicons name="settings-sharp" size={24} color="black" style={icons2} onPress
+                    ={
+                        () => navigation.navigate('Settings1')
+                    } />
+            }
             
         </View>
     </View>
@@ -39,15 +47,14 @@ const styles = StyleSheet.create({
   container:
   {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: "center",
-    width: '99%',
-    height: 50,
-    paddingVertical: 10,
-    position: 'absolute',
-    zIndex: 100,
-    top: 40,
-    backgroundColor: "rgb(245, 231, 231)",
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        paddingVertical: 10,
+        position: 'absolute',
+        top: 0,
+        zIndex: 100,
+        backgroundColor: "rgb(241, 212, 212)",
     
   },
 

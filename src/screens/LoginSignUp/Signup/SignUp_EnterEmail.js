@@ -11,43 +11,47 @@ import logo from '../../../../assets/Logo.png'
 const Signup_EnterEmail = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)
-    const handleEmail = () => {
-        //setLoading(true)
-        // navigation.navigate('Signup_EnterVerificationCode')
-        if (email == '') {
-            alert('Please enter email')
-        }
-        else {
-            setLoading(true)
-            fetch('http://192.168.0.100:3000/verify', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email
-                })
-            })
-                .then(res => res.json()).then(
-                    data => {
-                        if (data.error === "Invalid Credentials") {
-                            // alert('Invalid Credentials')
-                            alert('Invalid Credentials')
-                            setLoading(false)
-                        }
-                        else if (data.message === "Verification Code Sent to your Email") {
-                            setLoading(false)
-                            alert(data.message);
-                            navigation.navigate('SignUp_EnterVerificationCode', {
-                                useremail: data.email,
-                                userVerificationCode: data.VerificationCode
-                            })
+    const handleEmail = async () => {
+  if (email === '') {
+    alert('Please enter email');
+    return;
+  }
 
-                        }
-                    }
-                )
-        }
+  setLoading(true);
+
+  try {
+    console.log("Sending email to:", email); // <-- debug log
+
+    const response = await fetch('http://192.168.0.101:3000/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    console.log("Response from server:", data); // <-- debug log
+
+    if (data.error === "Invalid Credentials") {
+      alert('Invalid Credentials');
+    } else if (data.message === "Verification Code Sent to your Email") {
+      alert(data.message);
+      navigation.navigate('SignUp_EnterVerificationCode', {
+        useremail: data.email,
+        userVerificationCode: data.VerificationCode,
+      });
+    } else {
+      alert('Unexpected response');
     }
+  } catch (err) {
+    console.error("Error fetching:", err);
+    alert('Could not connect to server');
+  } finally {
+    setLoading(false);
+  }
+};
+
     return (
         <View style={containerFull}>
             <TouchableOpacity onPress={() => navigation.navigate('Login')} style={goback}>
