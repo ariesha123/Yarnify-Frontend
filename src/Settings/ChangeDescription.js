@@ -21,7 +21,7 @@ const ChangeDescription = ({ navigation }) => {
             setLoading(true)
             AsyncStorage.getItem('user').then(
                 data => {
-                    fetch('http://192.168.0.100:3000/setdescription', {
+                    fetch('http://192.168.0.101:3000/setdescription', {
                         method: 'post',
                         headers: {
                             'Content-Type': 'application/json'

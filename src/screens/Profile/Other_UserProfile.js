@@ -1,381 +1,365 @@
-import { StyleSheet, Text, View, StatusBar, ScrollView, Image, ActivityIndicator } from 'react-native'
-import React, { useEffect } from 'react'
-import { containerFull } from '../../common css/pagecss'
-import { formHead } from '../../common css/formsCss'
-import Bottomnavbar from '../../Components/Bottomnavbar'
-import TopNavbar from '../../Components/TopNavbar'
-import FollowersRandomPost from '../../Components/FollowersRandomPost'
-import nopic from '../../../assets/nopic.jpeg'
-import { Foundation } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react'; 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  StatusBar,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+  SafeAreaView,
+  Platform,
+  Alert,
+} from 'react-native';
+import Bottomnavbar from '../../Components/Bottomnavbar';
+import TopNavbar from '../../Components/TopNavbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import nopic from '../../../assets/nopic.jpeg';
+import { Foundation } from '@expo/vector-icons';
 
 const Other_UserProfile = ({ navigation, route }) => {
-    const [userdata, setUserdata] = React.useState(null)
-    const [issameuser, setIssameuser] = React.useState(false)
+  const [userdata, setUserdata] = useState(null);
+  const [issameuser, setIssameuser] = useState(false);
+  const [isfollowing, setIsfollowing] = useState(false);
 
-    const ismyprofile = (
-        otheruser
-    ) => {
+  const { user } = route.params;
 
-        AsyncStorage.getItem('user').then((loggeduser) => {
-            const loggeduserobj = JSON.parse(loggeduser);
-            if (loggeduserobj.user._id == otheruser._id) {
-                setIssameuser(true)
+  const ismyprofile = (otheruser) => {
+    AsyncStorage.getItem('user').then((loggeduser) => {
+      const loggeduserobj = JSON.parse(loggeduser);
+      setIssameuser(loggeduserobj.user._id === otheruser._id);
+    });
+  };
 
-            }
-            else {
-                setIssameuser(false)
-            }
-        })
+  const loaddata = async () => {
+    try {
+      const res = await fetch('http://192.168.0.101:3000/otheruserdata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await res.json();
+      if (data.message === 'User Found') {
+        setUserdata(data.user);
+        ismyprofile(data.user);
+        CheckFollow(data.user);
+      } else {
+        Alert.alert('User Not Found');
+        navigation.navigate('SearchUserPage');
+      }
+    } catch (err) {
+      Alert.alert('Something went wrong');
+      navigation.navigate('SearchUserPage');
     }
-    const { user } = route.params
-    // console.log(user)
-    const loaddata = async () => {
-        fetch('http://192.168.0.102:3000/otheruserdata', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: user.email })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.message == 'User Found') {
-                    setUserdata(data.user)
-                    ismyprofile(data.user)
-                    CheckFollow(data.user)
-                }
-                else {
-                    alert('User Not Found')
-                    navigation.navigate('SearchUserPage')
-                    // navigation.navigate('Login')
-                }
-            })
-            .catch(err => {
-                // console.log(err)
-                alert('Something Went Wrong')
-                navigation.navigate('SearchUserPage')
-            })
-    }
-    useEffect(() => {
-        loaddata()
-    }, [])
+  };
 
-    // console.log('userdata ', userdata)
+  const FollowThisUser = async () => {
+    const loggeduser = await AsyncStorage.getItem('user');
+    const loggeduserobj = JSON.parse(loggeduser);
+    fetch('http://192.168.0.101:3000/followuser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        followfrom: loggeduserobj.user.email,
+        followto: userdata.email,
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message === 'User Followed') {
+          setIsfollowing(true);
+          loaddata();
+        } else {
+          Alert.alert('Error', 'Something went wrong');
+        }
+      });
+  };
 
+  const UnfollowThisUser = async () => {
+    const loggeduser = await AsyncStorage.getItem('user');
+    const loggeduserobj = JSON.parse(loggeduser);
+    fetch('http://192.168.0.101:3000/unfollowuser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        followfrom: loggeduserobj.user.email,
+        followto: userdata.email,
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message === 'User Unfollowed') {
+          setIsfollowing(false);
+          loaddata();
+        } else {
+          Alert.alert('Error', 'Something went wrong');
+        }
+      });
+  };
 
-    const FollowThisUser = async () => {
-        console.log('FollowThisUser')
-        const loggeduser = await AsyncStorage.getItem('user');
-        const loggeduserobj = JSON.parse(loggeduser);
-        fetch('http://192.168.0.102:3000/followuser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                followfrom: loggeduserobj.user.email,
-                followto: userdata.email
-            })
-        }).then(res => res.json())
-            .then(data => {
-                if (data.message == 'User Followed') {
-                    // alert('Followed')
-                    loaddata()
-                    setIsfollowing(true)
-                }
-                else {
-                    alert('Something Went Wrong')
-                }
-            })
-    }
+  const CheckFollow = async (otheruser) => {
+    const loggeduser = await AsyncStorage.getItem('user');
+    const loggeduserobj = JSON.parse(loggeduser);
+    fetch('http://192.168.0.101:3000/checkfollow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        followfrom: loggeduserobj.user.email,
+        followto: otheruser.email,
+      }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        setIsfollowing(data.message === 'User in following list');
+      });
+  };
 
-    const [isfollowing, setIsfollowing] = React.useState(false)
-    const CheckFollow = async (otheruser) => {
-        AsyncStorage.getItem('user')
-            .then(loggeduser => {
-                const loggeduserobj = JSON.parse(loggeduser);
-                fetch('http://192.168.0.102:3000/checkfollow', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        followfrom: loggeduserobj.user.email,
-                        followto: otheruser.email
-                    })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.message == 'User in following list') {
-                            setIsfollowing(true)
-                        }
-                        else if (
-                            data.message == 'User not in following list'
-                        ) {
+  useEffect(() => {
+    loaddata();
+  }, []);
 
-                            setIsfollowing(false)
-                        }
-                        else {
-                            // loaddata()
-                            alert('Something Went Wrong')
-                        }
-                    })
-            })
+  // Helper: filter duplicate posts and sort newest first
+  const getUniqueSortedPosts = (posts) => {
+    if (!posts) return [];
+    const uniquePosts = posts.filter(
+      (post, index, self) => index === self.findIndex(p => p._id === post._id)
+    );
+    // Sort descending by createdAt (if exists)
+    return uniquePosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  };
 
-    }
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      <View style={styles.container}>
+        <TopNavbar navigation={navigation} page="Other_UserProfile" />
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Foundation
+            name="refresh"
+            size={24}
+            color="white"
+            style={styles.refresh}
+            onPress={loaddata}
+          />
+          {userdata ? (
+            <>
+              <View style={styles.c1}>
+                <Image
+                  style={styles.profilepic}
+                  source={userdata.profilepic.length > 0 ? { uri: userdata.profilepic } : nopic}
+                />
+                <Text style={styles.txt}>@{userdata.username}</Text>
 
+                {!issameuser && (
+                  <View style={styles.row}>
+                    <TouchableOpacity
+                      style={[styles.followBtn, isfollowing && styles.unfollowBtn]}
+                      onPress={isfollowing ? UnfollowThisUser : FollowThisUser}
+                    >
+                      <Text style={styles.followText}>
+                        {isfollowing ? 'Following' : 'Follow'}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.messageBtn}
+                      onPress={() =>
+                        navigation.navigate('MessagePage', {
+                          fuseremail: userdata.email,
+                          fuserid: userdata._id,
+                        })
+                      }
+                    >
+                      <Text style={styles.messageText}>Message</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
 
+                <View style={styles.c11}>
+                  <View style={styles.c111}>
+                    <Text style={styles.txt1}>Followers</Text>
+                    <Text style={styles.txt2}>{userdata.followers.length}</Text>
+                  </View>
+                  <View style={styles.vr1}></View>
+                  <View style={styles.c111}>
+                    <Text style={styles.txt1}>Following</Text>
+                    <Text style={styles.txt2}>{userdata.following.length}</Text>
+                  </View>
+                  <View style={styles.vr1}></View>
+                  <View style={styles.c111}>
+                    <Text style={styles.txt1}>Posts</Text>
+                    <Text style={styles.txt2}>{userdata.posts.length}</Text>
+                  </View>
+                </View>
 
-    const UnfollowThisUser = async () => {
-        console.log('UnfollowThisUser')
-        const loggeduser = await AsyncStorage.getItem('user');
-        const loggeduserobj = JSON.parse(loggeduser);
-        fetch('http://192.168.0.102:3000/unfollowuser', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                followfrom: loggeduserobj.user.email,
-                followto: userdata.email
-            })
-        }).then(res => res.json())
-            .then(data => {
-                if (data.message == 'User Unfollowed') {
-                    // alert('Followed')
-                    loaddata()
-                    setIsfollowing(false)
-                }
-                else {
-                    alert('Something Went Wrong')
-                }
-            })
-    }
-    return (
-        <View style={styles.container}>
-            <StatusBar />
-            <TopNavbar navigation={navigation} page={"Other_UserProfile"} />
-            <Bottomnavbar navigation={navigation} page={"SearchUserPage"} />
-            <Foundation name="refresh" size={30} color="white" style={styles.refresh}
-                onPress={() => loaddata()}
-            />
-            {
-                userdata ?
-                    <ScrollView>
-                        <View style={styles.c1}>
-                            {
-                                userdata.profilepic.length > 0 ?
-                                    <Image style={styles.profilepic} source={{ uri: userdata.profilepic }} />
-                                    :
-                                    <Image style={styles.profilepic} source={nopic} />
-                            }
-                            <Text style={styles.txt}>@{userdata.username}</Text>
+                {userdata.description.length > 0 && (
+                  <Text style={styles.description}>{userdata.description}</Text>
+                )}
+              </View>
 
-                            {
-                                issameuser ?
-                                    <></>
-                                    :
-                                    <View style={styles.row}>
-                                        {
-                                            isfollowing ?
-                                                <Text style={
-                                                    styles.follow
-                                                }
-                                                    onPress={() => UnfollowThisUser()}
-                                                >Following</Text>
-                                                :
-                                                <Text style={
-                                                    styles.follow
-                                                }
-                                                    onPress={() => FollowThisUser()}
-                                                >Follow</Text>
-                                        }
-                                        <Text
-                                            style={styles.message}
-                                            onPress={
-                                                ()=>{
-                                                    navigation.navigate('MessagePage',{
-                                                        fuseremail : userdata.email,
-                                                        fuserid : userdata._id,
-                                                    })
-                                                
-                                                }
-                                            }
-                                        >Message</Text>
-                                    </View>
-                            }
+              {(isfollowing || issameuser) ? (
+                getUniqueSortedPosts(userdata.posts).length > 0 ? (
+                  <View style={styles.c1}>
+                    <Text style={styles.txt}>Posts</Text>
+                    <View style={styles.c13}>
+                      {getUniqueSortedPosts(userdata.posts).map((item, index) => (
+                        <TouchableOpacity
+                          key={item._id ? item._id : `post-${index}`}
+                          onPress={() =>
+                            
+                              navigation.navigate('PostDetails_OtherUser', { postId: item._id })
+                          }
+                        >
+                          <Image style={styles.postpic} source={{ uri: item.post }} />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.c2}>
+                    <Text style={styles.txt1}>This user has not posted anything yet</Text>
+                  </View>
+                )
+              ) : (
+                <View style={styles.c2}>
+                  <Text style={styles.txt1}>Follow to see posts</Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <ActivityIndicator size="large" color="black" />
+          )}
+        </ScrollView>
+        <Bottomnavbar navigation={navigation} page="SearchUserPage" />
+      </View>
+    </SafeAreaView>
+  );
+};
 
-                            <View style={styles.c11}>
-                                <View style={styles.c111}>
-                                    <Text style={styles.txt1}>Followers</Text>
-                                    <Text style={styles.txt2}>{userdata.followers.length}</Text>
-                                </View>
-                                <View style={styles.vr1}></View>
-                                <View style={styles.c111}>
-                                    <Text style={styles.txt1}>Following</Text>
-                                    <Text style={styles.txt2}>{userdata.following.length}</Text>
-                                </View>
-                                <View style={styles.vr1}></View>
-                                <View style={styles.c111}>
-                                    <Text style={styles.txt1}>Posts</Text>
-                                    <Text style={styles.txt2}>{userdata.posts.length}</Text>
-                                </View>
-                            </View>
-
-                            {
-                                userdata.description.length > 0 &&
-                                <Text style={styles.description}>{userdata.description}</Text>
-                            }
-
-
-                        </View>
-                        {
-                            isfollowing || issameuser ?
-                                <View>
-                                    {
-                                        userdata.posts.length > 0 ?
-                                            <View style={styles.c1}>
-                                                <Text style={styles.txt}>Posts</Text>
-                                                <View style={styles.c13}>
-                                                    {
-                                                        userdata.posts?.map(
-                                                            (item) => {
-                                                                return (
-                                                                    <Image key={item.post} style={styles.postpic}
-                                                                        source={{ uri: item.post }}
-                                                                    />
-                                                                )
-                                                            }
-                                                        )
-                                                    }
-                                                </View>
-                                            </View>
-                                            :
-                                            <View style={styles.c2}>
-                                                <Text style={styles.txt1}>This user has not posted anything yet</Text>
-                                            </View>
-                                    }
-                                </View>
-
-                                :
-                                <View style={styles.c2}>
-                                    <Text style={styles.txt1}>Follow to see posts</Text>
-                                </View>
-                        }
-                    </ScrollView>
-
-                    :
-                    <ActivityIndicator size="large" color="white" />
-            }
-
-        </View>
-    )
-}
-
-export default Other_UserProfile
+export default Other_UserProfile;
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgb(229, 206, 206)',
-        paddingVertical: 50,
-    },
-    c1: {
-        width: '100%',
-        alignItems: 'center',
-    },
-    profilepic: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        margin: 10
-    },
-    txt: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-        margin: 10,
-        backgroundColor: 'rgb(206, 120, 120)',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 20
-    },
-    txt1: {
-        color: 'black',
-        fontSize: 15,
-    },
-    txt2: {
-        color: 'black',
-        fontSize: 20,
-    },
-    c11: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    c111: {
-        alignItems: 'center',
-    },
-    vr1: {
-        width: 1,
-        height: 50,
-        backgroundColor: 'white'
-    },
-    description: {
-        color: 'black',
-        fontSize: 15,
-        marginVertical: 10,
-        backgroundColor: 'rgb(229, 206, 206)',
-        width: '100%',
-        padding: 10,
-        paddingVertical: 20,
-    },
-    postpic: {
-        width: '30%',
-        height: 120,
-        margin: 5
-    },
-    c13: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginBottom: 20,
-        justifyContent: 'center'
-    },
-    c2: {
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 200
-    },
-    refresh: {
-        position: 'absolute',
-        top: 50,
-        right: 5,
-        zIndex: 1,
-    },
-    follow: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-        margin: 10,
-        backgroundColor: '#0AD6A0',
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 20
-    },
-    message: {
-        color: 'black',
-        fontSize: 20,
-        fontWeight: 'bold',
-        margin: 10,
-        backgroundColor: 'white',
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 20
-    },
-    row: {
-        flexDirection: 'row',
-    }
-})
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    paddingBottom: 100,
+  },
+  c1: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  profilepic: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    marginTop: 40,
+    borderWidth: 2,
+    borderColor: '#f7b2b7',
+  },
+  txt: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'bold',
+    margin: 10,
+    backgroundColor: '#f7b2b7',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  txt1: {
+    color: 'black',
+    fontSize: 14,
+  },
+  txt2: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  c11: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
+  c111: {
+    alignItems: 'center',
+  },
+  vr1: {
+    width: 1,
+    height: 50,
+    backgroundColor: '#ccc',
+  },
+  description: {
+    color: '#333',
+    fontSize: 14,
+    backgroundColor: '#ffe4e6',
+    width: '90%',
+    padding: 12,
+    borderRadius: 10,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  followBtn: {
+    backgroundColor: '#0AD6A0',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginHorizontal: 5,
+  },
+  unfollowBtn: {
+    backgroundColor: '#ccc',
+  },
+  followText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  messageBtn: {
+    backgroundColor: '#f7b2b7',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginHorizontal: 5,
+  },
+  messageText: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  c2: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 200,
+  },
+  postpic: {
+    width: 100,
+    height: 100,
+    margin: 5,
+    borderRadius: 10,
+  },
+  c13: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  refresh: {
+    position: 'absolute',
+    top: 10,
+    right: 20,
+    backgroundColor: '#f7b2b7',
+    padding: 8,
+    borderRadius: 20,
+    zIndex: 10,
+  },
+});

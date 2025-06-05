@@ -26,6 +26,9 @@ import ChangeDescription from './src/Settings/ChangeDescription';
 import Other_UserProfile from './src/screens/Profile/Other_UserProfile';
 import MessagePage from './src/screens/ChatSection/MessagePage';
 import UploadProfilePicture from './src/Settings/UploadProfilePicture';
+import AddPost from './src/screens/Mainpage/AddPost';
+import PostDetails from './src/screens/Posts/PostDetails';
+import PostDetails_OtherUser from './src/screens/Posts/PostDetails_OtherUser';
 
 
 
@@ -60,9 +63,10 @@ export default function App() {
       <Stack.Screen name="Other_UserProfile" component={Other_UserProfile} />
       <Stack.Screen name="MessagePage" component={MessagePage} />
        <Stack.Screen name="UploadProfilePicture" component={UploadProfilePicture} />
-      
-      
-      
+       <Stack.Screen name="AddPost" component={AddPost} />
+      <Stack.Screen name="PostDetails" component={PostDetails} />
+      <Stack.Screen name="PostDetails_OtherUser" component={PostDetails_OtherUser} />
+
       <Stack.Screen name="All_Chats" component={All_Chats} 
           options={{
             animation: "slide_from_right"

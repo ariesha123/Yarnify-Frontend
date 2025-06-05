@@ -21,7 +21,7 @@ const ChangeUsername = ({ navigation }) => {
             setLoading(true)
             AsyncStorage.getItem('user')
                 .then(data => {
-                    fetch('http://192.168.0.100:3000/setusername', {
+                    fetch('http://192.168.0.101:3000/setusername', {
                         method: 'post',
                         headers: {
                             'Content-Type': 'application/json'

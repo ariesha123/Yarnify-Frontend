@@ -35,7 +35,7 @@ const Login = ({ navigation }) => {
                     else if (data.message == 'Successfully Signed In') {
                         setLoading(false)
                         await AsyncStorage.setItem('user', JSON.stringify(data))
-                        navigation.navigate('MainPage', { data })
+                        navigation.navigate('Mainpage', { data })
                     }
                 })
                 .catch(err => {

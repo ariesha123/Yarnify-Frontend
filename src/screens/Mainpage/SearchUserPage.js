@@ -19,7 +19,7 @@ const SearchUserPage = ({ navigation }) => {
     const getallusers = async () => {
         if (keyword.length > 0) {
             setLoading(true)
-            fetch('http://192.168.0.102:3000/searchuser', {
+            fetch('http://192.168.0.101:3000/searchuser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     container: {
        width: '100%',
         height: '100%',
-        backgroundColor: 'rgb(229, 206, 206)',
+        backgroundColor: 'white',
         paddingVertical: 50, 
     },
     userlists: {

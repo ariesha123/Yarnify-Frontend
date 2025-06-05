@@ -9,7 +9,7 @@ import nopic from '../../../assets/nopic.jpeg';
 import io from 'socket.io-client'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const socket = io('http://192.168.0.102:3000')
+const socket = io('http://192.168.0.101:3000')
 
 
 const MessagePage = ({ navigation, route }) => {
@@ -49,7 +49,7 @@ const MessagePage = ({ navigation, route }) => {
     const loaddata = async () => {
         AsyncStorage.getItem('user')
             .then(async (value) => {
-                fetch('http://192.168.0.102:3000/userdata', {
+                fetch('http://192.168.0.101:3000/userdata', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const MessagePage = ({ navigation, route }) => {
                             setOuruserdata(data.user)
                             setUserid(data.user._id)
 
-                            fetch('http://192.168.0.102:3000/otheruserdata', {
+                            fetch('http://192.168.0.101:3000/otheruserdata', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const MessagePage = ({ navigation, route }) => {
             senderid: userid,
             recieverid: fuserdata._id
         }
-        fetch('http://192.168.0.102:3000/savemessagetodb', {
+        fetch('http://192.168.0.101:3000/savemessagetodb', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ const MessagePage = ({ navigation, route }) => {
 
 
     const loadMessages = (temproomid) => {
-        fetch('http://192.168.0.102:3000/getmessages', {
+        fetch('http://192.168.0.101:3000/getmessages', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

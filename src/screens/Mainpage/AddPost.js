@@ -1,138 +1,188 @@
-
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
-import React, { useState } from 'react'
-import { containerFull, goback, hr80, logo1 } from '../../common css/pagecss'
-import logo from '../../../assets/Logo.png'
-import { formbtn, formHead, formHead2, formHead3, formInput, formTextLinkCenter, formTextLinkRight } from '../../common css/formsCss'
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPost = ({ navigation }) => {
-    const [postdescription, setpostdescription] = useState('')
-    const [loading1, setLoading1] = useState(false)
-    const [loading2, setLoading2] = useState(false)
-    const [post, setPost] = useState('')
+  const [postdescription, setpostdescription] = useState('');
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
+  const [post, setPost] = useState(null);
 
-    const pickImage = async () => {
-        setLoading1(true)
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 0.5, // Reduced quality to make base64 string smaller
-            base64: true // This is important for getting base64 data
-        })
+  const pickImage = async () => {
+    setLoading1(true);
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      base64: true,
+    });
 
-        if (!result.canceled) {
-            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
-            setLoading1(false)
-            setPost(base64Image)
-        } else {
-            setLoading1(false)
-            setPost(null)
-        }
+    if (!result.canceled) {
+      const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setPost(base64Image);
+    }
+    setLoading1(false);
+  };
+
+  const handleUpload = async () => {
+    if (!post) {
+      alert('Please select an image');
+      return;
     }
 
-    const handleUpload = () => {
-        if (!post) {
-            alert('Please select an image')
-            return
-        }
+    try {
+      const data = await AsyncStorage.getItem('user');
+      if (!data) throw new Error('User not found in storage');
 
-        AsyncStorage.getItem('user')
-            .then(data => {
-                setLoading2(true)
-                fetch('http://192.168.0.102:3000/addpost', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: JSON.parse(data).user.email,
-                        post: post, // Now sending base64 string
-                        postdescription: postdescription
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.message == 'Post added successfully') {
-                        alert('Post added successfully')
-                        setLoading2(false)
-                        navigation.navigate('My_UserProfile')
-                    } else {
-                        alert('Something went wrong, please try again')
-                        setLoading2(false)
-                    }
-                })
-                .catch(err => {
-                    alert('Network error, please try again')
-                    setLoading2(false)
-                })
-            })
+      const { token } = JSON.parse(data);
+
+      setLoading2(true);
+
+      const response = await fetch('http://192.168.0.101:3000/addpost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          caption: postdescription,
+          post: post,
+        }),
+      });
+
+      const resData = await response.json();
+
+      if (resData.message === 'Post added successfully') {
+        alert('Post added successfully');
+        navigation.navigate('My_UserProfile');
+      } else {
+        alert(resData.error || 'Something went wrong, please try again');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error, please try again');
+    } finally {
+      setLoading2(false);
     }
+  };
 
-    return (
-        <View style={containerFull}>
-            <TouchableOpacity onPress={() => navigation.navigate('Settings_1')} style={goback}>
-                <MaterialIcons name="arrow-back-ios" size={24} color="gray" />
-                <Text style={{
-                    color: 'gray',
-                    fontSize: 16,
-                }}>Go Back</Text>
-            </TouchableOpacity>
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.navigate('Mainpage')} style={styles.goBack}>
+        <MaterialIcons name="arrow-back-ios" size={24} color="black" />
+        <Text style={styles.goBackText}>Go Back</Text>
+      </TouchableOpacity>
 
-            <Image source={logo} style={logo1} />
-            {
-                loading1 ? <ActivityIndicator size="large" color="white" /> :
-                    <>
-                        <Text style={formHead2}>Add New Post</Text>
-                        {
-                            post ?
-                                <TouchableOpacity onPress={() => pickImage()}>
-                                    <Image source={{ uri: post }} style={{
-                                        width: 200, height: 200,
-                                        marginVertical: 10,
-                                    }} />
-                                </TouchableOpacity>
-                                :
-                                <Text style={styles.addpost} onPress={() => pickImage()}>
-                                    Click here to select a new post
-                                </Text>
-                        }
-                    </>
-            }
+      <Text style={styles.heading}>Add New Post</Text>
 
-            <Text style={formHead2}>Change Description</Text>
-            <TextInput placeholder="Enter new description" style={formInput}
-                onChangeText={(text) => setpostdescription(text)}
-                multiline={true}
-                numberOfLines={5}
-            />
+      {loading1 ? (
+        <ActivityIndicator size="large" color="black" />
+      ) : (
+        <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
+          {post ? (
+            <Image source={{ uri: post }} style={styles.image} />
+          ) : (
+            <Text style={styles.imagePlaceholder}>Click here to select a new post</Text>
+          )}
+        </TouchableOpacity>
+      )}
 
-            {
-                loading2 ? <ActivityIndicator size="large" color="white" /> :
-                    <Text style={formbtn} onPress={() => handleUpload()}>
-                        Upload
-                    </Text>
-            }
-        </View>
-    )
-}
+      <Text style={styles.label}>Change Description</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter new description"
+        multiline
+        numberOfLines={4}
+        value={postdescription}
+        onChangeText={setpostdescription}
+      />
 
-export default AddPost
+      {loading2 ? (
+        <ActivityIndicator size="large" color="black" />
+      ) : (
+        <TouchableOpacity style={styles.uploadBtn} onPress={handleUpload}>
+          <Text style={styles.uploadBtnText}>Upload</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
+export default AddPost;
 
 const styles = StyleSheet.create({
-    addpost: {
-        fontSize: 20,
-        fontWeight: '100',
-        color: 'white',
-        borderColor: 'white',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingVertical: 50,
-        width: '80%',
-        textAlign: 'center',
-        marginVertical: 20,
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    alignItems: 'center',
+  },
+  goBack: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  goBackText: {
+    fontSize: 16,
+    color: 'black',
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  imageContainer: {
+    width: '100%',
+    height: 200,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
+  },
+  imagePlaceholder: {
+    color: '#999',
+    fontSize: 16,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  input: {
+    width: '100%',
+    height: 100,
+    borderColor: '#f7b2b7',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+    backgroundColor: '#ffe4e6',
+    textAlignVertical: 'top',
+  },
+  uploadBtn: {
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#f7b2b7',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  uploadBtnText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+});

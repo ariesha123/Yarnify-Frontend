@@ -82,7 +82,7 @@ module.exports = {
     searchbar: {
 
     width: "90%",
-    backgroundColor: 'rgb(214, 160, 160)',
+    backgroundColor: '#f7b2b7',
     borderRadius: 30,
     paddingVertical: 10,
     paddingHorizontal: 10,

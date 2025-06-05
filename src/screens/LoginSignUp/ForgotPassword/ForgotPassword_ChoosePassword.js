@@ -22,7 +22,7 @@ const ForgotPassword_ChoosePassword = ({navigation, route}) => {
 
         else {
             setLoading(true);
-            fetch('http://192.168.0.100:3000/resetpassword', {
+            fetch('http://192.168.0.101:3000/resetpassword', {
 
                 method: 'POST',
                 headers: {

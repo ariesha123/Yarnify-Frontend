@@ -25,7 +25,7 @@ const ChangePassword = ({ navigation }) => {
             AsyncStorage.getItem('user')
 
                 .then(data => {
-                    fetch('http://10.0.2.2:3000/changepassword', {
+                    fetch('http://198.168.0.0:3000/changepassword', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

@@ -18,7 +18,7 @@ const All_Chats = ({ navigation }) => {
         setUserdata(JSON.parse(data));
         let userid = JSON.parse(data).user._id;
 
-        fetch('http://192.168.0.102:3000/getusermessages', {
+        fetch('http://192.168.0.101:3000/getusermessages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userid }),

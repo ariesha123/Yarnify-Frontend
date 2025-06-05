@@ -20,7 +20,7 @@ const ForgotPassword_EnterEmail= ({navigation}) => {
 
         else {
             setLoading(true)
-            fetch('http://192.168.0.100:3000/verifyfp', {
+            fetch('http://192.168.0.101:3000/verifyfp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
